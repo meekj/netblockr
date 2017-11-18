@@ -26,7 +26,9 @@ struct nbTable {
   std::map <u_int, int>     nb_map;
 };
 
-
+//' Load netblock data into a table. Returns a pointer to the table.
+//'
+//' @export
 // [[Rcpp::export]]
 XPtr< nbTable > nbBuildNetblockTable (CharacterVector BaseAndMask, CharacterVector IPaddrStrings, IntegerVector Mask, CharacterVector Description) {
   struct sockaddr_in sa;
@@ -63,7 +65,9 @@ XPtr< nbTable > nbBuildNetblockTable (CharacterVector BaseAndMask, CharacterVect
 
 // See:  https://www.r-bloggers.com/external-pointers-with-rcpp/
 
-
+//' Add the unique netmasks to the table in the desired search order, usually largest netmask first to find shortest match
+//'
+//' @export
 // [[Rcpp::export]]
 void nbSetMaskOrder (XPtr< nbTable > nbt, IntegerVector Masks) { // Could do it in BuildNetblockTable
   for(int i = 0; i < Masks.size(); ++i) {                        //  but easier to do it with R help
@@ -71,7 +75,9 @@ void nbSetMaskOrder (XPtr< nbTable > nbt, IntegerVector Masks) { // Could do it 
   }
 }
 
-
+//' Dumps netblock data table into a data frame
+//'
+//' @export
 // [[Rcpp::export]]
 DataFrame nbGetNetblockTable (XPtr< nbTable > nbt) { // Access to net block table from R
 
@@ -83,7 +89,9 @@ return DataFrame::create(Named("NetBlock")=nbt->nb_base_and_mask,
 			       _["stringsAsFactors"] = false );			       			       
 }
 
-
+//' Lookup IPv4 address in a netblock table
+//'
+//' @export
 // [[Rcpp::export]]
 DataFrame nbLookupIPaddrs (XPtr< nbTable > nbt, CharacterVector IPaddrStrings) { // Lookup IP addresses provided in a vector
   struct sockaddr_in sa;
