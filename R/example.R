@@ -21,22 +21,23 @@ nbSetMaskOrder(nbPtr1, sort(unique(nets1$Bits), decreasing = TRUE)) # Sort order
 
 typeof(nbPtr1) # Verify that we got a pointer from nbBuildNetblockTable
 
-nb1 <- nbGetNetblockTable(nbPtr1) # Dump the netblock data
-str(nb1)
-
-
+## Test address lookup
 testIPs1 <- c('74.125.18.1', '74.125.18.21', '74.125.41.2', '172.217.33.193', '173.194.100.4', '192.168.10.48')
 
 lookup1 <- nbLookupIPaddrs(nbPtr1, testIPs1)
 lookup1
 
 
-## Bad data in lookup:
-
+## Bad data in lookup
 testIPs2 <- c('74.125.18.1', '74.125.18.21', '74.125.41.2', '172.217.33.193', '173.194.100.4', '192.168.10.48', 'aa.bb.JJ.dd.ee')
 
 lookup2 <- nbLookupIPaddrs(nbPtr1, testIPs2)
 lookup2
+
+
+## Dump the netblock data
+nb1 <- nbGetNetblockTable(nbPtr1)
+str(nb1)
 
 
 ## When finished, remove pointer, and presumably the memory
