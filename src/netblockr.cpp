@@ -7,6 +7,8 @@ using namespace Rcpp;
 #include <string>
 #include <map>
 
+// [[Rcpp::interfaces(r, cpp)]]
+
 static const u_int maskval_ipv4[33] = { 0x00000000,
 					0x80000000, 0xc0000000, 0xe0000000, 0xf0000000,
 					0xf8000000, 0xfc000000, 0xfe000000, 0xff000000,
