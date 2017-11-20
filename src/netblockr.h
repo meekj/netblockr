@@ -10,10 +10,12 @@ static const u_int maskval_ipv4[33] = { 0x00000000,
 					0xfffffff8, 0xfffffffc, 0xfffffffe, 0xffffffff };
 
 
-// The table of networks
+// Data structure for the table of networks
+
 struct nbTable {
   std::vector <u_int>       nb_base_as_uint;
   std::vector <int>         nb_mask, nb_unique_masks;
   std::vector <std::string> nb_base_and_mask, nb_base_as_string, nb_description;
   std::map <u_int, int>     nb_map;
 };
+
