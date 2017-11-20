@@ -14,6 +14,8 @@ nets1$Bits <- as.integer(t[,2])
 
 str(nets1)
 
+library(netblockr)
+
 ## Build the netblock data table
 
 nbPtr1 <- nbBuildNetblockTable(nets1$NetBlock, nets1$Base, nets1$Bits, nets1$Description)
