@@ -3,59 +3,157 @@
 
 #include "../inst/include/netblockr.h"
 #include <Rcpp.h>
+#include <string>
+#include <set>
 
 using namespace Rcpp;
 
 // nbBuildNetblockTable
 XPtr< nbTable > nbBuildNetblockTable(CharacterVector BaseAndMask, CharacterVector IPaddrStrings, IntegerVector Mask, CharacterVector Description);
-RcppExport SEXP _netblockr_nbBuildNetblockTable(SEXP BaseAndMaskSEXP, SEXP IPaddrStringsSEXP, SEXP MaskSEXP, SEXP DescriptionSEXP) {
+static SEXP _netblockr_nbBuildNetblockTable_try(SEXP BaseAndMaskSEXP, SEXP IPaddrStringsSEXP, SEXP MaskSEXP, SEXP DescriptionSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< CharacterVector >::type BaseAndMask(BaseAndMaskSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type IPaddrStrings(IPaddrStringsSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type Mask(MaskSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type Description(DescriptionSEXP);
     rcpp_result_gen = Rcpp::wrap(nbBuildNetblockTable(BaseAndMask, IPaddrStrings, Mask, Description));
     return rcpp_result_gen;
-END_RCPP
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _netblockr_nbBuildNetblockTable(SEXP BaseAndMaskSEXP, SEXP IPaddrStringsSEXP, SEXP MaskSEXP, SEXP DescriptionSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_netblockr_nbBuildNetblockTable_try(BaseAndMaskSEXP, IPaddrStringsSEXP, MaskSEXP, DescriptionSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error(CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
 }
 // nbSetMaskOrder
 void nbSetMaskOrder(XPtr< nbTable > nbt, IntegerVector Masks);
-RcppExport SEXP _netblockr_nbSetMaskOrder(SEXP nbtSEXP, SEXP MasksSEXP) {
+static SEXP _netblockr_nbSetMaskOrder_try(SEXP nbtSEXP, SEXP MasksSEXP) {
 BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtr< nbTable > >::type nbt(nbtSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type Masks(MasksSEXP);
     nbSetMaskOrder(nbt, Masks);
     return R_NilValue;
-END_RCPP
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _netblockr_nbSetMaskOrder(SEXP nbtSEXP, SEXP MasksSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_netblockr_nbSetMaskOrder_try(nbtSEXP, MasksSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error(CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
 }
 // nbGetNetblockTable
 DataFrame nbGetNetblockTable(XPtr< nbTable > nbt);
-RcppExport SEXP _netblockr_nbGetNetblockTable(SEXP nbtSEXP) {
+static SEXP _netblockr_nbGetNetblockTable_try(SEXP nbtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtr< nbTable > >::type nbt(nbtSEXP);
     rcpp_result_gen = Rcpp::wrap(nbGetNetblockTable(nbt));
     return rcpp_result_gen;
-END_RCPP
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _netblockr_nbGetNetblockTable(SEXP nbtSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_netblockr_nbGetNetblockTable_try(nbtSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error(CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
 }
 // nbLookupIPaddrs
 DataFrame nbLookupIPaddrs(XPtr< nbTable > nbt, CharacterVector IPaddrStrings);
-RcppExport SEXP _netblockr_nbLookupIPaddrs(SEXP nbtSEXP, SEXP IPaddrStringsSEXP) {
+static SEXP _netblockr_nbLookupIPaddrs_try(SEXP nbtSEXP, SEXP IPaddrStringsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtr< nbTable > >::type nbt(nbtSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type IPaddrStrings(IPaddrStringsSEXP);
     rcpp_result_gen = Rcpp::wrap(nbLookupIPaddrs(nbt, IPaddrStrings));
     return rcpp_result_gen;
-END_RCPP
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP _netblockr_nbLookupIPaddrs(SEXP nbtSEXP, SEXP IPaddrStringsSEXP) {
+    SEXP rcpp_result_gen;
+    {
+        Rcpp::RNGScope rcpp_rngScope_gen;
+        rcpp_result_gen = PROTECT(_netblockr_nbLookupIPaddrs_try(nbtSEXP, IPaddrStringsSEXP));
+    }
+    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
+    if (rcpp_isInterrupt_gen) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
+    if (rcpp_isError_gen) {
+        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
+        UNPROTECT(1);
+        Rf_error(CHAR(rcpp_msgSEXP_gen));
+    }
+    UNPROTECT(1);
+    return rcpp_result_gen;
 }
 
-RcppExport SEXP _netblockr_RcppExport_registerCCallable();
+// validate (ensure exported C++ functions exist before calling them)
+static int _netblockr_RcppExport_validate(const char* sig) { 
+    static std::set<std::string> signatures;
+    if (signatures.empty()) {
+        signatures.insert("XPtr< nbTable >(*nbBuildNetblockTable)(CharacterVector,CharacterVector,IntegerVector,CharacterVector)");
+        signatures.insert("void(*nbSetMaskOrder)(XPtr< nbTable >,IntegerVector)");
+        signatures.insert("DataFrame(*nbGetNetblockTable)(XPtr< nbTable >)");
+        signatures.insert("DataFrame(*nbLookupIPaddrs)(XPtr< nbTable >,CharacterVector)");
+    }
+    return signatures.find(sig) != signatures.end();
+}
+
+// registerCCallable (register entry points for exported C++ functions)
+RcppExport SEXP _netblockr_RcppExport_registerCCallable() { 
+    R_RegisterCCallable("netblockr", "_netblockr_nbBuildNetblockTable", (DL_FUNC)_netblockr_nbBuildNetblockTable_try);
+    R_RegisterCCallable("netblockr", "_netblockr_nbSetMaskOrder", (DL_FUNC)_netblockr_nbSetMaskOrder_try);
+    R_RegisterCCallable("netblockr", "_netblockr_nbGetNetblockTable", (DL_FUNC)_netblockr_nbGetNetblockTable_try);
+    R_RegisterCCallable("netblockr", "_netblockr_nbLookupIPaddrs", (DL_FUNC)_netblockr_nbLookupIPaddrs_try);
+    R_RegisterCCallable("netblockr", "_netblockr_RcppExport_validate", (DL_FUNC)_netblockr_RcppExport_validate);
+    return R_NilValue;
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_netblockr_nbBuildNetblockTable", (DL_FUNC) &_netblockr_nbBuildNetblockTable, 4},

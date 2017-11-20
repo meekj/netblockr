@@ -29,3 +29,7 @@ nbLookupIPaddrs <- function(nbt, IPaddrStrings) {
     .Call(`_netblockr_nbLookupIPaddrs`, nbt, IPaddrStrings)
 }
 
+# Register entry points for exported C++ functions
+methods::setLoadAction(function(ns) {
+    .Call('_netblockr_RcppExport_registerCCallable', PACKAGE = 'netblockr')
+})
