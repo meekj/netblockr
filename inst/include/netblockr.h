@@ -1,3 +1,11 @@
+#include <stdint.h>
+
+#include <arpa/inet.h>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+
 
 static const u_int maskval_ipv4[33] = { 0x00000000,
 					0x80000000, 0xc0000000, 0xe0000000, 0xf0000000,
