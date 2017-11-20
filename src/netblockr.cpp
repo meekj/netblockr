@@ -9,8 +9,6 @@ using namespace Rcpp;
 
 #include <netblockr.h>
 
-// [[Rcpp::interfaces(r, cpp)]]
-
 //' Load netblock data into a table. Returns a pointer to the table.
 //'
 //' @export
