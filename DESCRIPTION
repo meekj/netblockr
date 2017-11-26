@@ -1,7 +1,7 @@
 Package: netblockr
 Type: Package
 Title: Lookup IPv4 address in table of netblocks with mutliple netmasks
-Version: 0.01
+Version: 0.02
 Date: 2017-11-18
 Author: Jon Meek
 Maintainer: Jon Meek <meekj@ieee.org>
@@ -9,6 +9,9 @@ Description: Builds tables of IPv4 networks with base address, netmask, a descri
 	     build function returns a pointer to R that is used to reference that table. A vector of IPv4 addresses
 	     can then be looked up and returned in a data frame.
 License: GPL (>= 2)
-Imports: Rcpp (>= 0.12.13)
+Imports: Rcpp (>= 0.12.13),
+         dplyr,
+	 readr,
+	 stringr
 LinkingTo: Rcpp
 RoxygenNote: 6.0.1
