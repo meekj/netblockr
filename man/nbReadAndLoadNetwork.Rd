@@ -23,8 +23,9 @@ for fast lookup of IPv4 addresses with nbLookupIPaddrs
 }
 \examples{
 
- organization_net_file <- 'data/org-net.txt'
- nbPtrOrg <- nbReadAndLoadNetwork(organization_net_file)
+\dontrun{
+organization_net_file <- 'data/org-net.txt'
+nbPtrOrg <- nbReadAndLoadNetwork(organization_net_file)
 
 nb <- nbGetNetblockTable(nbPtrOrg)
 nb
@@ -34,5 +35,6 @@ testAddrs <- c('10.10.10.1', '10.20.10.18', '10.16.3.28', '10.16.8.50', '10.16.9
 
 
 nbLookupIPaddrs(nbPtrOrg, testAddrs)
+}
 
 }
