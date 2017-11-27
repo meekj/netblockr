@@ -24,8 +24,9 @@
 #' @return An external pointer to the table data structure in C++ space
 #' @examples
 #'
-#'  organization_net_file <- 'data/org-net.txt'
-#'  nbPtrOrg <- nbReadAndLoadNetwork(organization_net_file)
+#' \dontrun{
+#' organization_net_file <- 'data/org-net.txt'
+#' nbPtrOrg <- nbReadAndLoadNetwork(organization_net_file)
 #'
 #' nb <- nbGetNetblockTable(nbPtrOrg)
 #' nb
@@ -35,6 +36,7 @@
 #'
 #'
 #' nbLookupIPaddrs(nbPtrOrg, testAddrs)
+#' }
 #'
 nbReadAndLoadNetwork <- function(file, skip_lines = 0) {
 
