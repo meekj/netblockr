@@ -21,20 +21,3 @@ Read a file with netblocks in CIDR format and a free form dscription
 of the netblock, then build a table of the network with an index
 for fast lookup of IPv4 addresses with nbLookupIPaddrs
 }
-\examples{
-
-\dontrun{
-organization_net_file <- 'data/org-net.txt'
-nbPtrOrg <- nbReadAndLoadNetwork(organization_net_file)
-
-nb <- nbGetNetblockTable(nbPtrOrg)
-nb
-
-testAddrs <- c('10.10.10.1', '10.20.10.18', '10.16.3.28', '10.16.8.50', '10.16.9.50',
-               '10.16.18.18', '10.16.18.35', '10.48.17.32', '10.50.17.32')
-
-
-nbLookupIPaddrs(nbPtrOrg, testAddrs)
-}
-
-}
