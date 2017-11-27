@@ -5,28 +5,28 @@
 #'
 #' @export
 nbBuildNetblockTable <- function(BaseAndMask, IPaddrStrings, Mask, Description) {
-    .Call(`_netblockr_nbBuildNetblockTable`, BaseAndMask, IPaddrStrings, Mask, Description)
+    .Call('_netblockr_nbBuildNetblockTable', PACKAGE = 'netblockr', BaseAndMask, IPaddrStrings, Mask, Description)
 }
 
 #' Add the unique netmasks to the table in the desired search order, usually largest netmask first to find shortest match
 #'
 #' @export
 nbSetMaskOrder <- function(nbt, Masks) {
-    invisible(.Call(`_netblockr_nbSetMaskOrder`, nbt, Masks))
+    invisible(.Call('_netblockr_nbSetMaskOrder', PACKAGE = 'netblockr', nbt, Masks))
 }
 
 #' Dumps netblock data table into a data frame
 #'
 #' @export
 nbGetNetblockTable <- function(nbt) {
-    .Call(`_netblockr_nbGetNetblockTable`, nbt)
+    .Call('_netblockr_nbGetNetblockTable', PACKAGE = 'netblockr', nbt)
 }
 
 #' Lookup IPv4 address in a netblock table
 #'
 #' @export
 nbLookupIPaddrs <- function(nbt, IPaddrStrings) {
-    .Call(`_netblockr_nbLookupIPaddrs`, nbt, IPaddrStrings)
+    .Call('_netblockr_nbLookupIPaddrs', PACKAGE = 'netblockr', nbt, IPaddrStrings)
 }
 
 # Register entry points for exported C++ functions

@@ -34,8 +34,6 @@
 #'                '10.16.18.18', '10.16.18.35', '10.48.17.32', '10.50.17.32')
 #'
 #'
-#' testAddrs <- c('10.16.0.28', '10.16.1.28', '10.16.2.28', '10.16.3.28') # Problem
-#'
 #' nbLookupIPaddrs(nbPtrOrg, testAddrs)
 #'
 nbReadAndLoadNetwork <- function(file, skip_lines = 0) {
