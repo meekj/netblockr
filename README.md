@@ -14,93 +14,117 @@ To install:
     library(devtools)
     devtools::install_github("meekj/netblockr")
 
-Test:
+Example network description file:
 
-	library(stringr) # For str_split_fixed
+	# Organization network example  (a comment line)
+	#  empty lines are ignored and can be used for human readability
+	Netblock  Region Code More info (indented lines are comments)
 
-	nb_txt_file1 <- 'data/google-dns-ipv4.txt'
+	10.16.0.0/12    NOAM xxx North America Supernet
+	10.16.0.0/22    NOAM PTN Princeton NJ Data Center Servers
+	10.16.4.0/24    NOAM PTN Princeton NJ Data Center Network
+	10.16.5.0/24    NOAM PTN Princeton NJ Data Center Management
+	10.16.6.0/23    NOAM PTN Princeton NJ West Wing Floor #1 '#' in data
+	10.16.8.0/23    NOAM PTN Princeton NJ West Wing Floor #2
+	10.16.10.0/23   NOAM PTN Princeton NJ Administration Building
+	10.16.15.0/24   NOAM PTN Princeton NJ Environmental Controls
+	10.16.18.0/28   NOAM PTN Princeton NJ VPN Routers
+	10.16.18.16/28  NOAM PTN Princeton NJ DMZ
+	10.18.10.0/23   NOAM TOL Tolchester Beach MD
+	10.18.12.0/23   NOAM SCV Sarah Creek VA
 
-	nb_raw_nets1 <- read.table(nb_txt_file1, header = TRUE, stringsAsFactors = FALSE)
+	10.32.0.0/12    SOAM xxx South America Supernet
+	10.33.1.0/20    SOAM RIO Brazil
 
-	str(nb_raw_nets1)
+	10.48.0.0/12    EMEA xxx EMEA Supernet
+	10.48.10.0/23   EMEA LBS London Berkeley Square
+	10.48.12.0/23   EMEA PSS Portsmouth Southsea
+	10.48.14.0/23   EMEA IOW Cowes Isle of Wight
+	10.48.16.0/23   EMEA ZUR Zürich Wasserschöpfi
 
-	'data.frame':	68 obs. of  2 variables:
-	$ NetBlock   : chr  "74.125.18.0/26" "74.125.18.64/26" "74.125.18.128/26" "74.125.18.192/26" ...
-	$ Description: chr  "iad" "iad" "syd" "lhr" ...
-
-
-	t <- str_split_fixed(nb_raw_nets1$NetBlock, '/', 2)
-	nets1 <- nb_raw_nets1
-	nets1$Base <- t[,1]
-	nets1$Bits <- as.integer(t[,2])
-
-	str(nets1)
-
-	'data.frame':	68 obs. of  4 variables:
-	$ NetBlock   : chr  "74.125.18.0/26" "74.125.18.64/26" "74.125.18.128/26" "74.125.18.192/26" ...
-	$ Description: chr  "iad" "iad" "syd" "lhr" ...
-	$ Base       : chr  "74.125.18.0" "74.125.18.64" "74.125.18.128" "74.125.18.192" ...
-	$ Bits       : int  26 26 26 26 24 24 24 24 24 24 ...
-
-
-	## Build the netblock data table
-
-	nbPtr1 <- nbBuildNetblockTable(nets1$NetBlock, nets1$Base, nets1$Bits, nets1$Description)
-	nbSetMaskOrder(nbPtr1, sort(unique(nets1$Bits), decreasing = TRUE)) # Sort order to match smallest netblock
-
-	typeof(nbPtr1) # Verify that we got a pointer from nbBuildNetblockTable
-
-	## Test address lookup
-	testIPs1 <- c('74.125.18.1', '74.125.18.21', '74.125.41.2', '172.217.33.193', '173.194.100.4', '192.168.10.48')
-
-	lookup1 <- nbLookupIPaddrs(nbPtr1, testIPs1)
-	lookup1
-
-	IPaddr                    NetBlock Description
-	1    74.125.18.1    74.125.18.0/26         iad
-	2   74.125.18.21    74.125.18.0/26         iad
-	3    74.125.41.2    74.125.41.0/24         tpe
-	4 172.217.33.193 172.217.33.192/26         fra
-	5  173.194.100.4  173.194.100.0/24         mrn
-	6  192.168.10.48          NotFound    NotFound
+	10.64.0.0/12    APAC xxx APAC Supernet
+	10.64.10.0/23   APAC SNG Singapore
+	10.64.12.0/23   APAC TOK Tokyo Heiwajima
 
 
-
-	## Bad data in lookup
-	testIPs2 <- c('74.125.18.1', '74.125.18.21', '74.125.41.2', '172.217.33.193', '173.194.100.4', '192.168.10.48', 'aa.bb.JJ.dd.ee')
-
-	lookup2 <- nbLookupIPaddrs(nbPtr1, testIPs2)
-	Warning message:
-	In .Primitive(".Call")(<pointer: 0x7f51d52f3940>, nbt, IPaddrStrings) :
-	nbLookupIPaddrs Bad format IP address: aa.bb.JJ.dd.ee
-
-	lookup2
-
-	IPaddr                    NetBlock Description
-	1    74.125.18.1    74.125.18.0/26         iad
-	2   74.125.18.21    74.125.18.0/26         iad
-	3    74.125.41.2    74.125.41.0/24         tpe
-	4 172.217.33.193 172.217.33.192/26         fra
-	5  173.194.100.4  173.194.100.0/24         mrn
-	6  192.168.10.48          NotFound    NotFound
-	7 aa.bb.JJ.dd.ee          NotFound    NotFound
+Example usage:
 
 
+	library(dplyr)
+	library(readr)
+	library(stringr)
+	library(netblockr)
 
-	## Dump the netblock data
-	nb1 <- nbGetNetblockTable(nbPtr1)
-	str(nb1)
+	## A sample network description file included in the package
+	organization_net_file <- system.file("extdata", "org-net.txt", package = "netblockr")
 
-	'data.frame':	68 obs. of  5 variables:
-	$ NetBlock   : chr  "74.125.18.0/26" "74.125.18.64/26" "74.125.18.128/26" "74.125.18.192/26" ...
-	$ Base       : chr  "74.125.18.0" "74.125.18.64" "74.125.18.128" "74.125.18.192" ...
-	$ Mask       : int  26 26 26 26 24 24 24 24 24 24 ...
-	$ BaseInt    : num  1.25e+09 1.25e+09 1.25e+09 1.25e+09 1.25e+09 ...
-	$ Description: chr  "iad" "iad" "syd" "lhr" ...
+	## Build the network table in C++ space and get a pointer to the table
+	nbPtrOrg <- nbReadAndLoadNetwork(organization_net_file)
+
+	## Dump the network table, just for verification, etc.
+	nb <- nbGetNetblockTable(nbPtrOrg)
+	nb
+             NetBlock        Base Mask    BlockKey                                          Description
+	1    10.16.0.0/12   10.16.0.0   12 10804527116                      NOAM xxx North America Supernet
+	2    10.16.0.0/22   10.16.0.0   22 10804527126            NOAM PTN Princeton NJ Data Center Servers
+	3    10.16.4.0/24   10.16.4.0   24 10804592664            NOAM PTN Princeton NJ Data Center Network
+	4    10.16.5.0/24   10.16.5.0   24 10804609048         NOAM PTN Princeton NJ Data Center Management
+	5    10.16.6.0/23   10.16.6.0   23 10804625431 NOAM PTN Princeton NJ West Wing Floor #1 '#' in data
+	6    10.16.8.0/23   10.16.8.0   23 10804658199             NOAM PTN Princeton NJ West Wing Floor #2
+	7   10.16.10.0/23  10.16.10.0   23 10804690967        NOAM PTN Princeton NJ Administration Building
+	8   10.16.15.0/24  10.16.15.0   24 10804772888         NOAM PTN Princeton NJ Environmental Controls
+	9   10.16.18.0/28  10.16.18.0   28 10804822044                    NOAM PTN Princeton NJ VPN Routers
+	10 10.16.18.16/28 10.16.18.16   28 10804823068                            NOAM PTN Princeton NJ DMZ
+	11  10.18.10.0/23  10.18.10.0   23 10813079575                         NOAM TOL Tolchester Beach MD
+	12  10.18.12.0/23  10.18.12.0   23 10813112343                              NOAM SCV Sarah Creek VA
+	13   10.32.0.0/12   10.32.0.0   12 10871635980                      SOAM xxx South America Supernet
+	14   10.33.1.0/20   10.33.1.0   20 10875830292                                      SOAM RIO Brazil
+	15   10.48.0.0/12   10.48.0.0   12 10938744844                               EMEA xxx EMEA Supernet
+	16  10.48.10.0/23  10.48.10.0   23 10938908695                      EMEA LBS London Berkeley Square
+	17  10.48.12.0/23  10.48.12.0   23 10938941463                         EMEA PSS Portsmouth Southsea
+	18  10.48.14.0/23  10.48.14.0   23 10938974231                         EMEA IOW Cowes Isle of Wight
+	19  10.48.16.0/23  10.48.16.0   23 10939006999                        EMEA ZUR Zürich Wasserschöpfi
+	20   10.64.0.0/12   10.64.0.0   12 11005853708                               APAC xxx APAC Supernet
+	21  10.64.10.0/23  10.64.10.0   23 11006017559                                   APAC SNG Singapore
+	22  10.64.12.0/23  10.64.12.0   23 11006050327                             APAC TOK Tokyo Heiwajima
+
+
+	## Some IP addresses to lookup
+	testAddrs <- c('10.10.10.1', '10.20.10.18', '10.16.3.28', '10.16.8.50', '10.16.9.50',
+	'10.16.18.18', '10.16.18.35', '10.48.17.32', '10.50.17.32', '192.168.55.47')
+
+	## Which netblock contains the IP address?
+	nbLookupIPaddrs(nbPtrOrg, testAddrs)
+
+    ## Which netblock contains the IP address?
+    lookup_result <- nbLookupIPaddrs(nbPtrOrg, testAddrs)
+    lookup_result
+
+              IPaddr       NetBlock                               Description
+	1     10.10.10.1       NotFound                                  NotFound
+	2    10.20.10.18   10.16.0.0/12           NOAM xxx North America Supernet
+	3     10.16.3.28   10.16.0.0/22 NOAM PTN Princeton NJ Data Center Servers
+	4     10.16.8.50   10.16.8.0/23  NOAM PTN Princeton NJ West Wing Floor #2
+	5     10.16.9.50   10.16.8.0/23  NOAM PTN Princeton NJ West Wing Floor #2
+	6    10.16.18.18 10.16.18.16/28                 NOAM PTN Princeton NJ DMZ
+	7    10.16.18.35   10.16.0.0/12           NOAM xxx North America Supernet
+	8    10.48.17.32  10.48.16.0/23             EMEA ZUR Zürich Wasserschöpfi
+	9    10.50.17.32   10.48.0.0/12                    EMEA xxx EMEA Supernet
+	10 192.168.55.47       NotFound                                  NotFound
+
+
+
+    str(lookup_result)
+    'data.frame':   10 obs. of  3 variables:
+     $ IPaddr     : chr  "10.10.10.1" "10.20.10.18" "10.16.3.28" "10.16.8.50" ...
+     $ NetBlock   : chr  "NotFound" "10.16.0.0/12" "10.16.0.0/22" "10.16.8.0/23" ...
+     $ Description: chr  "NotFound" "NOAM xxx North America Supernet" "NOAM PTN Princeton NJ Data Center Servers" "NOAM PTN Princeton NJ West Wing Floor #2" ...
+
 
 
 	## When finished, remove pointer, and presumably the memory
 
-	rm(nbPtr1)
+	rm(nbPtrOrg)
 
 Only IPv4 is currently supported. Portions of the code were written with IPv6 in mind.
+
