@@ -3,7 +3,7 @@
    Netblock  Region Code More info (indented lines are comments)
 
 10.16.0.0/12    NOAM xxx North America Supernet
-10.16.3.0/24    NOAM PTN Princeton NJ Data Center Servers
+10.16.0.0/22    NOAM PTN Princeton NJ Data Center Servers
 10.16.4.0/24    NOAM PTN Princeton NJ Data Center Network
 10.16.5.0/24    NOAM PTN Princeton NJ Data Center Management
 10.16.6.0/23    NOAM PTN Princeton NJ West Wing Floor #1 '#' in data
