@@ -18,13 +18,8 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-#include <arpa/inet.h>
-#include <iostream>
-#include <vector>
-#include <string>
-#include <map>
-
 #include <netblockr.h>
+
 
 // [[Rcpp::interfaces(r, cpp)]]
 
@@ -35,7 +30,7 @@ using namespace Rcpp;
 XPtr< nbTable > nbBuildNetblockTable (CharacterVector BaseAndMask, CharacterVector IPaddrStrings, IntegerVector Mask, CharacterVector Description) {
   struct sockaddr_in sa;
   const char* ipaddrstring;
-  unsigned int binIP;
+  uint64_t binIP;
   
   int n = IPaddrStrings.size();
   IntegerVector binIPvec(n);
@@ -47,13 +42,14 @@ XPtr< nbTable > nbBuildNetblockTable (CharacterVector BaseAndMask, CharacterVect
     if (inet_pton(AF_INET, ipaddrstring, &sa.sin_addr)) { // Generate the unique index for each IPv4 net block
       binIP = htonl(sa.sin_addr.s_addr);
       binIP &= maskval_ipv4[Mask[i]];                     // Apply mask in case provided base address provided is not actual
+      binIP = (binIP << 6) + Mask[i];                     // Add in mask data for uniqueness
 
       nbt->nb_base_and_mask.push_back(as<std::string>(BaseAndMask[i])); // Build the table
       nbt->nb_mask.push_back(Mask[i]);
       nbt->nb_base_as_string.push_back(ipaddrstring);
       nbt->nb_base_as_uint.push_back(binIP);
       nbt->nb_description.push_back(as<std::string>(Description[i]));
-      nbt->nb_map.insert ( std::pair<u_int, int>(binIP, i) ); // Map of unique index to array index
+      nbt->nb_map.insert ( std::pair<uint64_t, int>(binIP, i) ); // Map of unique index to array index
 
     } else {                                                  // Log a warning if inet_pton fails
       std::string warning_ip_addr(ipaddrstring);              // so that netblock data can be fixed
@@ -66,6 +62,7 @@ XPtr< nbTable > nbBuildNetblockTable (CharacterVector BaseAndMask, CharacterVect
 
 // See:  https://www.r-bloggers.com/external-pointers-with-rcpp/
 
+
 //' Add the unique netmasks to the table in the desired search order, usually largest netmask first to find shortest match
 //'
 //' @export
@@ -76,6 +73,7 @@ void nbSetMaskOrder (XPtr< nbTable > nbt, IntegerVector Masks) { // Could do it 
   }
 }
 
+
 //' Dumps netblock data table into a data frame
 //'
 //' @export
@@ -85,7 +83,7 @@ DataFrame nbGetNetblockTable (XPtr< nbTable > nbt) { // Access to net block tabl
 return DataFrame::create(Named("NetBlock")=nbt->nb_base_and_mask,
 			       Named("Base")=nbt->nb_base_as_string,
 			       Named("Mask")=nbt->nb_mask,
-			       Named("BaseInt")=nbt->nb_base_as_uint,
+			       Named("BlockKey")=nbt->nb_base_as_uint,
 			       Named("Description")=nbt->nb_description,
 			       _["stringsAsFactors"] = false );			       			       
 }
@@ -97,7 +95,7 @@ return DataFrame::create(Named("NetBlock")=nbt->nb_base_and_mask,
 DataFrame nbLookupIPaddrs (XPtr< nbTable > nbt, CharacterVector IPaddrStrings) { // Lookup IP addresses provided in a vector
   struct sockaddr_in sa;
   const char* ipaddrstring;
-  unsigned int binIP, t_binIP;
+  uint64_t binIP, t_binIP;
   int match_index;
   std::string match_string_network, match_string_description;
   std::vector <std::string> lu_base_and_mask, lu_description; // Lookup results
@@ -115,6 +113,9 @@ DataFrame nbLookupIPaddrs (XPtr< nbTable > nbt, CharacterVector IPaddrStrings) {
       
       for (int j = 0; j < nbt->nb_unique_masks.size(); j++) {    // Check each netmask possibility
 	t_binIP = binIP & maskval_ipv4[nbt->nb_unique_masks[j]]; // Index to check for existence
+	t_binIP = (t_binIP << 6) + nbt->nb_unique_masks[j];          // Add in mask data for uniqueness
+
+	// Rcout << std::setprecision(11) << "   t_binIP: " << t_binIP << "  mask: " << nbt->nb_unique_masks[j] << '\n';
       
 	if (nbt->nb_map.count(t_binIP) > 0) {                    // Do we have that netblock in the table?
 	  match_index = nbt->nb_map.find(t_binIP)->second;
