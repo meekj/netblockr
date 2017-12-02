@@ -18,6 +18,9 @@
 10.32.0.0/12    SOAM xxx South America Supernet
 10.33.1.0/20    SOAM RIO Brazil
 
+255.255.1.0/24  SOAM ANA Antarctica Near the other edge
+0.0.1.0/24      NOAM ART Arctic Near one edge
+
 10.48.0.0/12    EMEA xxx EMEA Supernet
 10.48.10.0/23   EMEA LBS London Berkeley Square
 10.48.12.0/23   EMEA PSS Portsmouth Southsea
