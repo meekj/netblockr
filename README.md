@@ -84,7 +84,9 @@ This package was inspired by the Perl Net::Netmask module which provides many mo
 
 	## Dump the network table, just for verification, etc.
 	nb <- nbGetNetblockTable(nbPtrOrg)
-	nb %>% arrange(BlockKey)          # Use BlockKey value to sort the netblocks
+
+    ## Use BlockKey value to sort the netblocks
+    nb %>% arrange(BlockKey)
 
              NetBlock        Base Mask     BlockKey                                          Description
 	1      0.0.1.0/24     0.0.1.0   24        16408                        NOAM ART Arctic Near one edge
@@ -137,13 +139,11 @@ This package was inspired by the Perl Net::Netmask module which provides many mo
 	10 192.168.55.47       NotFound                                  NotFound
 
 
-    ## When finished, remove pointer, and presumably the memory
+    ## When finished, remove pointer, and presumably free the memory
 
     rm(nbPtrOrg)
 
 ### Notes:
-
-Only IPv4 is currently supported however, portions of the code were written with IPv6 in mind.
 
 BlockKey is a unique value computed by anding the mask value with the
 integer form of netblock base IP address, shifting left 6 bits and
@@ -153,3 +153,6 @@ nbReadAndLoadNetwork() provides a convenient method to read an ASCII
 network description and build the netblock table in C++ space, but
 users can choose to build the table from vectors, or data.frame columns, using
 nbBuildNetblockTable() and nbSetMaskOrder().
+
+Only IPv4 is currently supported but portions of the code were written with IPv6 in mind.
+
