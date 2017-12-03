@@ -18,17 +18,20 @@ This package was inspired by the Perl Net::Netmask module which provides many mo
 
 * Identify 'unknown' IP addresses
 
-* Aid IP address management
+* Aid IP address management using data from logs, packet capture, etc
 
-** Identify active and in-active subnets based on observed traffic
+  * Identify active and in-active subnets based on observed traffic
 
-** Report unexpected IP addresses
+  * Compute DHCP range utilization
+
+  * Report unexpected IP addresses
 
 
 ### To install: 
 
     library(devtools)
     devtools::install_github("meekj/netblockr")
+	
 
 ### Example network description file:
 
@@ -134,18 +137,9 @@ This package was inspired by the Perl Net::Netmask module which provides many mo
 	10 192.168.55.47       NotFound                                  NotFound
 
 
+    ## When finished, remove pointer, and presumably the memory
 
-    str(lookup_result)
-    'data.frame':   10 obs. of  3 variables:
-     $ IPaddr     : chr  "10.10.10.1" "10.20.10.18" "10.16.3.28" "10.16.8.50" ...
-     $ NetBlock   : chr  "NotFound" "10.16.0.0/12" "10.16.0.0/22" "10.16.8.0/23" ...
-     $ Description: chr  "NotFound" "NOAM xxx North America Supernet" "NOAM PTN Princeton NJ Data Center Servers" "NOAM PTN Princeton NJ West Wing Floor #2" ...
-
-
-
-	## When finished, remove pointer, and presumably the memory
-
-rm(nbPtrOrg)
+    rm(nbPtrOrg)
 
 ### Notes:
 
