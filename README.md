@@ -37,7 +37,7 @@ This package was inspired by the Perl Net::Netmask module which provides many mo
 
 	# Organization network example  (a comment line)
 	#  empty lines are ignored and can be used for human readability
-	Netblock  Region Code More info (indented lines are comments)
+	   Netblock  Region Code More info (indented lines are comments)
 
 	10.16.0.0/12    NOAM xxx North America Supernet
 	10.16.0.0/22    NOAM PTN Princeton NJ Data Center Servers
