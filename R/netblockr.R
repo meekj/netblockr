@@ -15,7 +15,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with netblockr.  If not, see <http://www.gnu.org/licenses/>.
 
-#' Read a file with netblocks in CIDR format and a free form dscription
+#' Read a file with netblocks in CIDR format and a free form description
 #' of the netblock, then build a table of the network with an index
 #' for fast lookup of IPv4 addresses with nbLookupIPaddrs
 #'
@@ -42,3 +42,21 @@ nbReadAndLoadNetwork <- function(file, skip_lines = 0) {
     return(nb_ptr)
 }
 
+#' Build a network description table from a data frame.
+#'
+#' @param nets_df A data frame with columns named 'NetBlock' & 'Description'
+#' @return An external pointer to the table data structure in C++ space
+#' The input can contain empty rows. A '#' in the NetBlock field will cause that row to be ignored.
+#'
+nbLoadNetwork <- function(nets) {
+
+    nets <- nets %>% filter(!str_detect(NetBlock, '#') & str_length(NetBlock) > 0) # Drop comments, empty & indented lines
+
+    t <- str_split_fixed(nets$NetBlock, '/', 2)              # Breakout base IP address and number of bits in mask
+    nets$Base <- t[,1]
+    nets$Bits <- as.integer(t[,2])
+
+    nb_ptr <- nbBuildNetblockTable(nets$NetBlock, nets$Base, nets$Bits, nets$Description) # Call C++ function to build netblock table
+    nbSetMaskOrder(nb_ptr, sort(unique(nets$Bits), decreasing = TRUE))                    # Add mask search order - Required
+    return(nb_ptr)
+}
