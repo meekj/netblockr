@@ -225,8 +225,10 @@ then adding the mask bit count. BlockKey is an unsigned 64 bit number in C++ and
 
 nbReadAndLoadNetwork() provides a convenient method to read an ASCII
 network description and build the netblock table in C++ space, but
-users can choose to build the table from vectors, or data.frame columns, using
+users can choose to build the table from vectors, or data frame columns, using
 nbBuildNetblockTable() and nbSetMaskOrder().
+
+nbLoadNetwork(nets_df) is a new function to build a network table from a data frame that includes columns named 'NetBlock' & 'Description'.
 
 Only IPv4 is currently supported but portions of the code were written with IPv6 in mind.
 
