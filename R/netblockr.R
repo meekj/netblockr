@@ -50,7 +50,7 @@ nbReadAndLoadNetwork <- function(file, skip_lines = 0) {
 #'
 nbLoadNetwork <- function(nets) {
 
-    nets <- nets %>% dplyr::filter(!str_detect(NetBlock, '#') & dplyr::str_length(NetBlock) > 0) # Drop comments, empty & indented lines
+    nets <- nets %>% dplyr::filter(!stringr::str_detect(NetBlock, '#') & stringr::str_length(NetBlock) > 0) # Drop comments, empty & indented lines
 
     t <- stringr::str_split_fixed(nets$NetBlock, '/', 2)              # Breakout base IP address and number of bits in mask
     nets$Base <- t[,1]
