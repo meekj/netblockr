@@ -1,8 +1,8 @@
 Package: netblockr
 Type: Package
 Title: Lookup IPv4 address in table of netblocks with mutliple netmasks
-Version: 0.02
-Date: 2017-11-18
+Version: 0.04
+Date: 2020-04-05
 Author: Jon Meek
 Maintainer: Jon Meek <meekj@ieee.org>
 Description: Builds tables of IPv4 networks with base address, netmask, a description string, and a unique index. The table
@@ -14,7 +14,7 @@ Imports: Rcpp (>= 0.12.13),
 	 readr,
 	 stringr
 LinkingTo: Rcpp
-RoxygenNote: 6.0.1
+RoxygenNote: 7.0.2
 Suggests: knitr,
     rmarkdown,
     testthat
