@@ -2,7 +2,7 @@
 % Please edit documentation in R/netblockr.R
 \name{nbReadAndLoadNetwork}
 \alias{nbReadAndLoadNetwork}
-\title{Read a file with netblocks in CIDR format and a free form dscription
+\title{Read a file with netblocks in CIDR format and a free form description
 of the netblock, then build a table of the network with an index
 for fast lookup of IPv4 addresses with nbLookupIPaddrs}
 \usage{
@@ -17,7 +17,7 @@ nbReadAndLoadNetwork(file, skip_lines = 0)
 An external pointer to the table data structure in C++ space
 }
 \description{
-Read a file with netblocks in CIDR format and a free form dscription
+Read a file with netblocks in CIDR format and a free form description
 of the netblock, then build a table of the network with an index
 for fast lookup of IPv4 addresses with nbLookupIPaddrs
 }
