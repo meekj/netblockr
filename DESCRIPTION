@@ -1,8 +1,8 @@
 Package: netblockr
 Type: Package
 Title: Lookup IPv4 address in table of netblocks with mutliple netmasks
-Version: 0.04
-Date: 2020-04-05
+Version: 0.1.0
+Date: 2022-11-19
 Author: Jon Meek
 Maintainer: Jon Meek <meekj@ieee.org>
 Description: Builds tables of IPv4 networks with base address, netmask, a description string, and a unique index. The table
