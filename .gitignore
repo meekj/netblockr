@@ -1,3 +1,9 @@
 *~
-
+/src/*.o
+/src/*.o-*
+/src/*.d
+/src/*.so
 inst/doc
+orig.NAMESPACE
+src/symbols.rds
+tests/test-dev.R

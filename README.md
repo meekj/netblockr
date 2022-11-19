@@ -27,11 +27,11 @@ This package was inspired by the Perl Net::Netmask module which provides many mo
   * Report unexpected IP addresses
 
 
-### To install: 
+### To install:
 
-    library(devtools)
-    devtools::install_github("meekj/netblockr")
-	
+	library(devtools)
+	devtools::install_github("meekj/netblockr")
+
 
 ### Example network description file:
 
@@ -55,8 +55,8 @@ This package was inspired by the Perl Net::Netmask module which provides many mo
 	10.32.0.0/12    SOAM xxx South America Supernet
 	10.33.1.0/20    SOAM RIO Brazil
 
-    255.255.1.0/24  SOAM ANA Antarctica Near the other edge
-    0.0.1.0/24      NOAM ART Arctic Near one edge
+	255.255.1.0/24  SOAM ANA Antarctica Near the other edge
+	0.0.1.0/24      NOAM ART Arctic Near one edge
 
 	10.48.0.0/12    EMEA xxx EMEA Supernet
 	10.48.10.0/23   EMEA LBS London Berkeley Square
@@ -85,10 +85,10 @@ This package was inspired by the Perl Net::Netmask module which provides many mo
 	## Dump the network table, just for verification, etc.
 	nb <- nbGetNetblockTable(nbPtrOrg)
 
-    ## Use BlockKey value to sort the netblocks
-    nb %>% arrange(BlockKey)
+	## Use BlockKey value to sort the netblocks
+	nb %>% arrange(BlockKey)
 
-             NetBlock        Base Mask     BlockKey                                          Description
+			 NetBlock        Base Mask     BlockKey                                          Description
 	1      0.0.1.0/24     0.0.1.0   24        16408                        NOAM ART Arctic Near one edge
 	2    10.16.0.0/12   10.16.0.0   12  10804527116                      NOAM xxx North America Supernet
 	3    10.16.0.0/22   10.16.0.0   22  10804527126            NOAM PTN Princeton NJ Data Center Servers
@@ -117,36 +117,37 @@ This package was inspired by the Perl Net::Netmask module which provides many mo
 
 	## Some IP addresses to lookup
 	testAddrs <- c('10.10.10.1', '10.20.10.18', '10.16.3.28', '10.16.8.50', '10.16.9.50',
-	               '10.16.18.18', '10.16.18.35', '10.48.17.32', '10.50.17.32', '192.168.55.47')
+				   '10.16.18.18', '10.16.18.35', '10.48.17.32', '10.50.17.32', '192.168.55.47')
 
 	## Which netblock contains the IP address?
 	nbLookupIPaddrs(nbPtrOrg, testAddrs)
 
-    ## Which netblock contains the IP address?
-    lookup_result <- nbLookupIPaddrs(nbPtrOrg, testAddrs)
-    lookup_result
+	## Which netblock contains the IP address?
+	lookup_result <- nbLookupIPaddrs(nbPtrOrg, testAddrs)
+	format(lookup_result, justify = 'left')
 
-              IPaddr       NetBlock                               Description
-	1     10.10.10.1       NotFound                                  NotFound
-	2    10.20.10.18   10.16.0.0/12           NOAM xxx North America Supernet
-	3     10.16.3.28   10.16.0.0/22 NOAM PTN Princeton NJ Data Center Servers
-	4     10.16.8.50   10.16.8.0/23  NOAM PTN Princeton NJ West Wing Floor #2
-	5     10.16.9.50   10.16.8.0/23  NOAM PTN Princeton NJ West Wing Floor #2
-	6    10.16.18.18 10.16.18.16/28                 NOAM PTN Princeton NJ DMZ
-	7    10.16.18.35   10.16.0.0/12           NOAM xxx North America Supernet
-	8    10.48.17.32  10.48.16.0/23             EMEA ZUR Zürich Wasserschöpfi
-	9    10.50.17.32   10.48.0.0/12                    EMEA xxx EMEA Supernet
-	10 192.168.55.47       NotFound                                  NotFound
+		  IPaddr       NetBlock                               Description
+	1  10.10.10.1    NotFound       NotFound
+	2  10.20.10.18   10.16.0.0/12   NOAM xxx North America Supernet
+	3  10.16.3.28    10.16.0.0/22   NOAM PTN Princeton NJ Data Center Servers
+	4  10.16.8.50    10.16.8.0/23   NOAM PTN Princeton NJ West Wing Floor #2
+	5  10.16.9.50    10.16.8.0/23   NOAM PTN Princeton NJ West Wing Floor #2
+	6  10.16.18.18   10.16.18.16/28 NOAM PTN Princeton NJ DMZ
+	7  10.16.18.35   10.16.0.0/12   NOAM xxx North America Supernet
+	8  10.48.12.32   10.48.12.0/23  EMEA PSS Portsmouth Southsea
+	9  10.48.17.32   10.48.16.0/23  EMEA ZUR Zürich Wasserschöpfi
+	10 10.50.17.32   10.48.0.0/12   EMEA xxx EMEA Supernet
+	11 192.168.55.47 NotFound       NotFound
 
 
 ### IP address management examples
 
 	## How many of the test IP addresses are in each netblock?
 	lookup_result %>% count(NetBlock) %>% arrange(desc(n))
-	
+
 	# A tibble: 7 x 2
-	        NetBlock     n
-	           <chr> <int>
+			NetBlock     n
+			   <chr> <int>
 	1   10.16.0.0/12     2
 	2   10.16.8.0/23     2
 	3       NotFound     2
@@ -158,8 +159,8 @@ This package was inspired by the Perl Net::Netmask module which provides many mo
 
 	## Active Subnets - which netblocks contain the test IP addresses?
 	inner_join(nb, lookup_result %>% count(NetBlock), by = 'NetBlock') %>% select(n, NetBlock, Description)
-	
-      n       NetBlock                               Description
+
+	  n       NetBlock                               Description
 	1 2   10.16.0.0/12           NOAM xxx North America Supernet
 	2 1   10.16.0.0/22 NOAM PTN Princeton NJ Data Center Servers
 	3 2   10.16.8.0/23  NOAM PTN Princeton NJ West Wing Floor #2
@@ -170,8 +171,8 @@ This package was inspired by the Perl Net::Netmask module which provides many mo
 
 	## In-active Subnets, based on the list of test addresses
 	anti_join(nb, lookup_result, by = 'NetBlock') %>% select(NetBlock, Description)
-	
-             NetBlock                                          Description
+
+			 NetBlock                                          Description
 	1      0.0.1.0/24                        NOAM ART Arctic Near one edge
 	2    10.16.4.0/24            NOAM PTN Princeton NJ Data Center Network
 	3    10.16.5.0/24         NOAM PTN Princeton NJ Data Center Management
@@ -195,16 +196,16 @@ This package was inspired by the Perl Net::Netmask module which provides many mo
 
 	## Addresses from unknown address space
 	lookup_result %>% filter(Description == 'NotFound')
-	
-	         IPaddr NetBlock Description
+
+			 IPaddr NetBlock Description
 	1    10.10.10.1 NotFound    NotFound
 	2 192.168.55.47 NotFound    NotFound
 
 
 	## Unknown subnets within a supernet
 	lookup_result %>% filter(str_detect(Description, 'xxx') & str_detect(Description, 'Supernet'))
-	
-	       IPaddr     NetBlock                     Description
+
+		   IPaddr     NetBlock                     Description
 	1 10.20.10.18 10.16.0.0/12 NOAM xxx North America Supernet
 	2 10.16.18.35 10.16.0.0/12 NOAM xxx North America Supernet
 	3 10.50.17.32 10.48.0.0/12          EMEA xxx EMEA Supernet
@@ -212,9 +213,9 @@ This package was inspired by the Perl Net::Netmask module which provides many mo
 
 ### Cleanup
 
-    ## When finished, remove pointer, and presumably free the memory
+	## When finished, remove pointer, and presumably free the memory
 
-    rm(nbPtrOrg)
+	rm(nbPtrOrg)
 
 
 ### Notes:
@@ -231,4 +232,3 @@ nbBuildNetblockTable() and nbSetMaskOrder().
 nbLoadNetwork(nets_df) is a new function to build a network table from a data frame that includes columns named 'NetBlock' & 'Description'.
 
 Only IPv4 is currently supported but portions of the code were written with IPv6 in mind.
-

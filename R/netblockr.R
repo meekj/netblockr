@@ -1,4 +1,4 @@
-## Copyright (C) 2017  Jon Meek
+## Copyright (C) 2022  Jon Meek
 ##
 ## This file is part of netblockr.
 ##
@@ -23,19 +23,32 @@
 #' @param skip_lines Optional number of lines to skip, use if there is an uncommented header
 #' @return An external pointer to the table data structure in C++ space
 #'
-nbReadAndLoadNetwork <- function(file, skip_lines = 0) {
+nbReadAndLoadNetwork <- function(file, skip_lines = 0, quiet = FALSE) {
+    ## From O'Reilly Regular Expressions Cookbook by Jan Goyvaerts and Steven Levithan
+    ipv4_match <- '^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
 
     lines <- readr::read_lines(file, skip = skip_lines) # Skip non-commented / non-indented header line(s) if needed
-
-    t <- stringr::str_split_fixed(lines, '\\s+', 2)                   # Split on first whitespace
+    t <- stringr::str_split_fixed(lines, '\\s+', 2)     # Split on first whitespace
 
     nets <- as.data.frame(t, stringsAsFactors = FALSE)
     names(nets) <- c('NetBlock', 'Description')
     nets <- nets %>% dplyr::filter(!stringr::str_detect(NetBlock, '#') & stringr::str_length(NetBlock) > 0) # Drop comments, empty & indented lines
+    
+    ## Validate the network data, avoid a spectacular crash due to missing netmask
+    nets <- nets %>% dplyr::mutate(Base = stringr::str_extract(NetBlock, ipv4_match),
+                                   Bits = as.integer(stringr::str_extract(NetBlock, '(\\d+)$')))
+                            
+    nets <- nets %>% dplyr::mutate(Bits = ifelse(Bits <  0, NA, Bits))                           # Base ifelse coerces types
+    nets <- nets %>% dplyr::mutate(Bits = ifelse(Bits > 32, NA, Bits))                           # Can't use if_else with NA
+    nets <- nets %>% dplyr::mutate(Bits = ifelse(stringr::str_detect(NetBlock, '/'),  Bits, NA)) # No / is also missing mask
 
-    t <- stringr::str_split_fixed(nets$NetBlock, '/', 2)              # Breakout base IP address and number of bits in mask
-    nets$Base <- t[,1]
-    nets$Bits <- as.integer(t[,2])
+    bad_data <- nets %>% dplyr::filter(  is.na(Base) | (is.na(Bits)))
+    nets     <- nets %>% dplyr::filter(!(is.na(Base) | (is.na(Bits))))
+
+    if (!quiet & nrow(bad_data)) {        # Report IPv4 syntax errors
+        cat('IPv4 CIDR Syntax Errors\n')
+        print(bad_data)
+    }
 
     nb_ptr <- nbBuildNetblockTable(nets$NetBlock, nets$Base, nets$Bits, nets$Description) # Call C++ function to build netblock table
     nbSetMaskOrder(nb_ptr, sort(unique(nets$Bits), decreasing = TRUE))                    # Add mask search order - Required
@@ -48,13 +61,27 @@ nbReadAndLoadNetwork <- function(file, skip_lines = 0) {
 #' @return An external pointer to the table data structure in C++ space
 #' The input can contain empty rows. A '#' in the NetBlock field will cause that row to be ignored.
 #'
-nbLoadNetwork <- function(nets) {
-
+nbLoadNetwork <- function(nets, quiet = FALSE) {
+    ## From O'Reilly Regular Expressions Cookbook by Jan Goyvaerts and Steven Levithan
+    ipv4_match <- '^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
+ 
     nets <- nets %>% dplyr::filter(!stringr::str_detect(NetBlock, '#') & stringr::str_length(NetBlock) > 0) # Drop comments, empty & indented lines
 
-    t <- stringr::str_split_fixed(nets$NetBlock, '/', 2)              # Breakout base IP address and number of bits in mask
-    nets$Base <- t[,1]
-    nets$Bits <- as.integer(t[,2])
+    ## Validate the network data, avoid a spectacular crash due to missing netmask
+    nets <- nets %>% dplyr::mutate(Base = stringr::str_extract(NetBlock, ipv4_match),
+                                   Bits = as.integer(stringr::str_extract(NetBlock, '(\\d+)$')))
+                            
+    nets <- nets %>% dplyr::mutate(Bits = ifelse(Bits <  0, NA, Bits))                           # Base ifelse coerces types
+    nets <- nets %>% dplyr::mutate(Bits = ifelse(Bits > 32, NA, Bits))                           # Can't use if_else with NA
+    nets <- nets %>% dplyr::mutate(Bits = ifelse(stringr::str_detect(NetBlock, '/'),  Bits, NA)) # No / is also missing mask
+
+    bad_data <- nets %>% dplyr::filter(  is.na(Base) | (is.na(Bits)))
+    nets     <- nets %>% dplyr::filter(!(is.na(Base) | (is.na(Bits))))
+
+    if (!quiet & nrow(bad_data)) {        # Report IPv4 syntax errors
+        cat('IPv4 CIDR Syntax Errors\n')
+        print(bad_data)
+    }
 
     nb_ptr <- nbBuildNetblockTable(nets$NetBlock, nets$Base, nets$Bits, nets$Description) # Call C++ function to build netblock table
     nbSetMaskOrder(nb_ptr, sort(unique(nets$Bits), decreasing = TRUE))                    # Add mask search order - Required
@@ -70,7 +97,9 @@ nbLoadNetwork <- function(nets) {
 #' @return A data frame appropriate for nbLoadNetwork()
 #' The input can contain empty rows. A '#' in the NetBlock field will cause that row to be ignored.
 #'
-nbReadNetwork <- function(file, skip_lines = 0) { # New, Feb 2020
+nbReadNetwork <- function(file, skip_lines = 0, quiet = FALSE) { # New, Feb 2020
+    ## From O'Reilly Regular Expressions Cookbook by Jan Goyvaerts and Steven Levithan
+    ipv4_match <- '^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
 
     lines <- readr::read_lines(file, skip = skip_lines) # Skip non-commented / non-indented header line(s) if needed
 
@@ -80,9 +109,63 @@ nbReadNetwork <- function(file, skip_lines = 0) { # New, Feb 2020
     names(nets) <- c('NetBlock', 'Description')
     nets <- nets %>% dplyr::filter(!stringr::str_detect(NetBlock, '#') & stringr::str_length(NetBlock) > 0) # Drop comments, empty & indented lines
 
-    t <-  stringr::str_split_fixed(nets$NetBlock, '/', 2) # Breakout base IP address and number of bits in mask
-    nets$Base <- t[,1]
-    nets$Bits <- as.integer(t[,2])
+    ## Validate the network data, avoid a spectacular crash due to missing netmask
+    nets <- nets %>% dplyr::mutate(Base = stringr::str_extract(NetBlock, ipv4_match),
+                                   Bits = as.integer(stringr::str_extract(NetBlock, '(\\d+)$')))
+                            
+    nets <- nets %>% dplyr::mutate(Bits = ifelse(Bits <  0, NA, Bits))                           # Base ifelse coerces types
+    nets <- nets %>% dplyr::mutate(Bits = ifelse(Bits > 32, NA, Bits))                           # Can't use if_else with NA
+    nets <- nets %>% dplyr::mutate(Bits = ifelse(stringr::str_detect(NetBlock, '/'),  Bits, NA)) # No / is also missing mask
+
+    bad_data <- nets %>% dplyr::filter(  is.na(Base) | (is.na(Bits)))
+    nets     <- nets %>% dplyr::filter(!(is.na(Base) | (is.na(Bits))))
+
+    if (!quiet & nrow(bad_data)) {        # Report IPv4 syntax errors
+        cat('IPv4 CIDR Syntax Errors\n')
+        print(bad_data)
+    }
     return(nets)
+}
+
+#' Validate a network description file
+#' 
+#' Note that there is currently no check for duplicate NetBlocks, that can be done externally
+#' Avoid a spectacular crash due to missing netmask
+#' @param file Path to the input file
+#' @param skip_lines Optional number of lines to skip, use if there is an uncommented header
+#' @quiet if TRUE do not report data issues, just silently drop bad data
+#' @return A list of data frames, validatedNets and bad_data
+#' The input can contain empty rows. A '#' in the NetBlock field will cause that row to be ignored.
+#'
+nbReadAndValidate <- function(file, skip_lines = 0, quiet = FALSE) { # New, Nov 2022
+
+    ## From O'Reilly Regular Expressions Cookbook by Jan Goyvaerts and Steven Levithan
+    ipv4_match <- '^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
+    lines <- readr::read_lines(file, skip = skip_lines)               # Skip non-commented / non-indented header line(s) if needed
+
+    t <- stringr::str_split_fixed(lines, '\\s+', 2)                   # Split on first whitespace
+    nets <- as.data.frame(t, stringsAsFactors = FALSE)
+    names(nets) <- c('NetBlock', 'Description')
+    nets <- nets %>% dplyr::filter(!stringr::str_detect(NetBlock, '#') & stringr::str_length(NetBlock) > 0) # Drop comments, empty & indented lines
+
+    ## Validate the network data, avoid a spectacular crash due to missing netmask
+    nets <- nets %>% dplyr::mutate(Base = stringr::str_extract(NetBlock, ipv4_match),
+                                   Bits = as.integer(stringr::str_extract(NetBlock, '(\\d+)$')))
+                            
+    nets <- nets %>% dplyr::mutate(Bits = ifelse(Bits <  0, NA, Bits))                           # Base ifelse coerces types
+    nets <- nets %>% dplyr::mutate(Bits = ifelse(Bits > 32, NA, Bits))                           # Can't use if_else with NA
+    nets <- nets %>% dplyr::mutate(Bits = ifelse(stringr::str_detect(NetBlock, '/'),  Bits, NA)) # No / is also missing mask
+
+    bad_data <- nets %>% dplyr::filter(  is.na(Base) | (is.na(Bits)))
+    nets     <- nets %>% dplyr::filter(!(is.na(Base) | (is.na(Bits))))
+
+    if (!quiet & nrow(bad_data)) {        # Report IPv4 syntax errors
+        cat('IPv4 CIDR Syntax Errors\n')
+        print(bad_data)
+    }
+    ## attr(nets, 'problems') <- bad_data # Want something like the readr problems(). Must have a problems attribute that is an external pointer.
+    ## return(nets)
+
+    return(list(validatedNets = nets, badData =  bad_data))
 }
 
