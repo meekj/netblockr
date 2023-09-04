@@ -6,7 +6,7 @@
 of the netblock, then build a table of the network with an index
 for fast lookup of IPv4 addresses with nbLookupIPaddrs}
 \usage{
-nbReadAndLoadNetwork(file, skip_lines = 0)
+nbReadAndLoadNetwork(file, skip_lines = 0, quiet = FALSE)
 }
 \arguments{
 \item{file}{Path to the input file}

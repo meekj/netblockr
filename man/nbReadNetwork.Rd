@@ -6,7 +6,7 @@
 Used when multiple network description files need to be combined
 Note that there is currently no check for duplicate NetBlocks, that can be done externally}
 \usage{
-nbReadNetwork(file, skip_lines = 0)
+nbReadNetwork(file, skip_lines = 0, quiet = FALSE)
 }
 \arguments{
 \item{skip_lines}{Optional number of lines to skip, use if there is an uncommented header}

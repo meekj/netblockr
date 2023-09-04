@@ -4,7 +4,7 @@
 \alias{nbLoadNetwork}
 \title{Build a network description table from a data frame.}
 \usage{
-nbLoadNetwork(nets)
+nbLoadNetwork(nets, quiet = FALSE)
 }
 \arguments{
 \item{nets_df}{A data frame with columns named 'NetBlock' & 'Description'}
